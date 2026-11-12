@@ -22,12 +22,12 @@ void str_print(const char *s){
 }
 
 
-HASH_SET(char *, str_hash_set, str_cell)
+HASH_SET(char *, StringHashSet, str_cell, str_hash_set)
 
 
 int main(void){
     char *words[] = {"Hello", "World!", "This", "is","a", "hash", "set","lib","made","with","preprocessor"};
-    str_hash_set set;
+    StringHashSet set;
     str_hash_set_init(&set, str_hash, str_equals);
     str_hash_set_println(&set, str_print );
     for (size_t i=0; i<sizeof words/sizeof (char*); i++){

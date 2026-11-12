@@ -9,7 +9,6 @@ include_directories(src)
 
 add_executable(array_list_test
         test/array_list_test.c
-        test/hash_map_test.c
 )
 
 add_executable(hash_set_test

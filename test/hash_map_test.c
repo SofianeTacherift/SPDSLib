@@ -20,7 +20,8 @@ bool str_equals(const char * s1, const char *s2){
 void str_print(const char *s){
     printf("%s", s);
 }
-HASH_MAP(char *, int, str_int_hash_map, str_integer_entry)
+HASH_MAP(char *, int, StringIntHashMap, str_integer_entry, str_int_hash_map)
+
 void print_str_int_entry(const str_integer_entry * entry){
     printf("%s - %d", entry->key !=NULL ? entry->key : "NULL", entry->value);
 }
@@ -30,7 +31,7 @@ void print_str_int_entry(const str_integer_entry * entry){
 
 int main(void){
     char *keys[] = {"Hello", "World!", "this", "is","a", "hash", "map","lib","made","with","preprocessor"};
-    str_int_hash_map map;
+    StringIntHashMap map;
     str_int_hash_map_init(&map, str_hash, str_equals);
     str_int_hash_map_println(&map, print_str_int_entry);
     for (size_t i=0 ; i< sizeof keys / sizeof(char *); i++){

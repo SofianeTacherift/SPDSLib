@@ -12,7 +12,7 @@
 #include <string.h>
 #include <spds/hash_utils.h>
 
-#define HASH_MAP(K, V, HASH_MAP_NAME, ENTRY_NAME) \
+#define HASH_MAP(K, V, HASH_MAP_NAME, ENTRY_NAME, NAMESPACE) \
     \
     \
     typedef struct ENTRY_NAME {\
@@ -46,7 +46,7 @@
     \
     \
     \
-    static void HASH_MAP_NAME##_init(HASH_MAP_NAME *map, long ( *hash_func) (const  K),  bool ( *equals_func) ( const K, const K) ) { \
+    static void NAMESPACE##_init(HASH_MAP_NAME *map, long ( *hash_func) (const  K),  bool ( *equals_func) ( const K, const K) ) { \
         if (map==NULL) return;\
         map->capacity=16;\
         map->size=0;\
@@ -56,13 +56,13 @@
     }\
     \
     \
-    static HASH_MAP_NAME * HASH_MAP_NAME##_new ( long ( *hash_func) ( const K),  bool (*equals_func) ( const K, const K)) {\
+    static HASH_MAP_NAME * NAMESPACE##_new ( long ( *hash_func) ( const K),  bool (*equals_func) ( const K, const K)) {\
         HASH_MAP_NAME *res=calloc(1, sizeof (HASH_MAP_NAME));\
-        HASH_MAP_NAME##_init(res, hash_func, equals_func);\
+        NAMESPACE##_init(res, hash_func, equals_func);\
     }\
     \
     \
-    static void HASH_MAP_NAME##_free(HASH_MAP_NAME *map){\
+    static void NAMESPACE##_free(HASH_MAP_NAME *map){\
         for (size_t i=0; i<map->capacity ; i++) {\
             ENTRY_NAME *current = map->buckets[i];\
             while (current!=NULL) {\
@@ -74,12 +74,12 @@
         free(map->buckets);\
         free(map);\
     }\
-    static void HASH_MAP_NAME##_put ( HASH_MAP_NAME *map, K key, V value);\
-    static void HASH_MAP_NAME##_double_capacity( HASH_MAP_NAME *);\
+    static void NAMESPACE##_put ( HASH_MAP_NAME *map, K key, V value);\
+    static void NAMESPACE##_double_capacity( HASH_MAP_NAME *);\
     \
     \
     \
-    static void HASH_MAP_NAME##_put ( HASH_MAP_NAME *map, K key, V value) { \
+    static void NAMESPACE##_put ( HASH_MAP_NAME *map, K key, V value) { \
         long hash=map->hash_function(key);\
         size_t index=hash%map->capacity;\
         if (map->buckets[index]==NULL) {\
@@ -99,10 +99,10 @@
                 }\
         }\
         \
-        if ( needs_resize(map->size, map->capacity) ) {HASH_MAP_NAME##_double_capacity(map);} \
+        if ( needs_resize(map->size, map->capacity) ) {NAMESPACE##_double_capacity(map);} \
     }\
     \
-    static const V * HASH_MAP_NAME##_get  (HASH_MAP_NAME *map, K key) {\
+    static const V * NAMESPACE##_get  (HASH_MAP_NAME *map, K key) {\
         long hash = map->hash_function(key);\
         size_t index = hash % map->capacity;\
         ENTRY_NAME *current_index = map->buckets[index];\
@@ -112,7 +112,7 @@
         return (current_index==NULL) ? NULL : (const V*) (&current_index->value);\
     }\
     \
-    static const V HASH_MAP_NAME##_get_or_default(HASH_MAP_NAME *map, K key, V default_value) {\
+    static const V NAMESPACE##_get_or_default(HASH_MAP_NAME *map, K key, V default_value) {\
         long hash = map->hash_function(key);\
         size_t index = hash % map->capacity;\
         ENTRY_NAME *current_index = map->buckets[index];\
@@ -122,7 +122,7 @@
         return (current_index==NULL) ? default_value : (const V) (current_index->value);\
     }\
     \
-    static const ENTRY_NAME * HASH_MAP_NAME##_get_entry  (HASH_MAP_NAME *map, K key) {\
+    static const ENTRY_NAME * NAMESPACE##_get_entry  (HASH_MAP_NAME *map, K key) {\
         long hash = map->hash_function(key);\
         size_t index = hash % map->capacity;\
         ENTRY_NAME *current_index = map->buckets[index];\
@@ -132,7 +132,7 @@
         return (current_index==NULL) ? NULL : (const ENTRY_NAME*) (&current_index);\
     }\
     \
-    static bool HASH_MAP_NAME##_remove (HASH_MAP_NAME *map, K key) {\
+    static bool NAMESPACE##_remove (HASH_MAP_NAME *map, K key) {\
         long hash = map->hash_function(key);\
         size_t index = hash % map->capacity;\
         ENTRY_NAME *head = map->buckets[index];\
@@ -164,7 +164,7 @@
     \
     \
     \
-    static void HASH_MAP_NAME##_double_capacity( HASH_MAP_NAME *map) {\
+    static void NAMESPACE##_double_capacity( HASH_MAP_NAME *map) {\
         size_t old_capacity=map->capacity;\
         map->capacity*=2;\
         map->buckets=realloc(map->buckets, map->capacity * sizeof(ENTRY_NAME*));\
@@ -193,7 +193,7 @@
         free(sentinel);\
     }\
     \
-    static void HASH_MAP_NAME##_print( HASH_MAP_NAME *map,  void (*print_function) (const ENTRY_NAME*) ) {\
+    static void NAMESPACE##_print( HASH_MAP_NAME *map,  void (*print_function) (const ENTRY_NAME*) ) {\
         printf("%s[ capacity : %lu - size : %lu  { ", #HASH_MAP_NAME, map->capacity, map->size);\
         size_t count=0;\
         for (size_t i=0; count<map->size && i<map->capacity; i++) {\
@@ -212,8 +212,8 @@
         printf("} ]");\
     }\
     \
-    static void HASH_MAP_NAME##_println(HASH_MAP_NAME *map,void (*print_function) (const ENTRY_NAME*)) { \
-        HASH_MAP_NAME##_print(map, print_function);\
+    static void NAMESPACE##_println(HASH_MAP_NAME *map,void (*print_function) (const ENTRY_NAME*)) { \
+        NAMESPACE##_print(map, print_function);\
         printf("\n");\
     }\
     \

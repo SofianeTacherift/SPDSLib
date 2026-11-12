@@ -15,7 +15,7 @@
 
 
 #define BASE_HASH_SET_CAPACITY 16;
-#define HASH_SET(T, HASH_SET_NAME, CELL_NAME) \
+#define HASH_SET(T, HASH_SET_NAME, CELL_NAME, NAMESPACE) \
 \
 typedef struct CELL_NAME {\
     T value; \
@@ -39,7 +39,7 @@ typedef struct HASH_SET_NAME { \
 } HASH_SET_NAME;  \
 \
 \
- static void HASH_SET_NAME##_init(HASH_SET_NAME * set, long (*hash) (const T), bool (*equals) (const T,const T)) { \
+ static void NAMESPACE##_init(HASH_SET_NAME * set, long (*hash) (const T), bool (*equals) (const T,const T)) { \
        if (set==NULL) {return;}\
             set->capacity= BASE_HASH_SET_CAPACITY;\
             set->size=0;\
@@ -50,14 +50,14 @@ typedef struct HASH_SET_NAME { \
 \
 \
 \
-static HASH_SET_NAME * HASH_SET_NAME##_new( long (*hash) (const T), bool (*equals) (const T,const T), void (*print) (const T) ) {\
+static HASH_SET_NAME * NAMESPACE##_new( long (*hash) (const T), bool (*equals) (const T,const T), void (*print) (const T) ) {\
         HASH_SET_NAME *result = malloc( sizeof(HASH_SET_NAME));\
-        HASH_SET_NAME##_init(result, hash, equals);\
+        NAMESPACE##_init(result, hash, equals);\
         return result;\
 }\
 \
 \
-static void HASH_SET_NAME##_deinit( HASH_SET_NAME *set) {\
+static void NAMESPACE##_deinit( HASH_SET_NAME *set) {\
     for (size_t i=0; i<set->capacity; i++) {\
             CELL_NAME *current_index = set->buckets[i];\
             while (current_index!=NULL) {\
@@ -75,7 +75,7 @@ static void HASH_SET_NAME##_deinit( HASH_SET_NAME *set) {\
 \
 \
 \
-static void HASH_SET_NAME##_free (HASH_SET_NAME *set) {\
+static void NAMESPACE##_free (HASH_SET_NAME *set) {\
     for (size_t i=0; i<set->capacity; i++) {\
         CELL_NAME *current_index = set->buckets[i];\
         while (current_index!=NULL) {\
@@ -86,7 +86,7 @@ static void HASH_SET_NAME##_free (HASH_SET_NAME *set) {\
     }\
     free(set);\
 }\
-static void HASH_SET_NAME##_double_capacity(HASH_SET_NAME *set) {\
+static void NAMESPACE##_double_capacity(HASH_SET_NAME *set) {\
     size_t old_capacity=set->capacity;\
     set->capacity*=2;\
     set->buckets=realloc(set->buckets ,set->capacity * sizeof(CELL_NAME *)); \
@@ -118,7 +118,7 @@ static void HASH_SET_NAME##_double_capacity(HASH_SET_NAME *set) {\
 \
 \
 \
-static bool HASH_SET_NAME##_add( HASH_SET_NAME *set, T element) { \
+static bool NAMESPACE##_add( HASH_SET_NAME *set, T element) { \
     long hash = set->hash_function(element);        \
     size_t index = hash % set->capacity;\
     CELL_NAME *result = NULL; \
@@ -137,11 +137,11 @@ static bool HASH_SET_NAME##_add( HASH_SET_NAME *set, T element) { \
     }\
     if (result!=NULL) {set->size++;}\
     \
-    if ( needs_resize(set->size, set->capacity) ) { HASH_SET_NAME##_double_capacity(set);} \
+    if ( needs_resize(set->size, set->capacity) ) { NAMESPACE##_double_capacity(set);} \
     return result!=NULL;\
 }\
 \
-static bool HASH_SET_NAME##_remove(HASH_SET_NAME *set, T element) {\
+static bool NAMESPACE##_remove(HASH_SET_NAME *set, T element) {\
     long hash = set->hash_function(element);\
     size_t index = hash % set->capacity;\
     CELL_NAME *removed=NULL; \
@@ -163,7 +163,7 @@ static bool HASH_SET_NAME##_remove(HASH_SET_NAME *set, T element) {\
     return removed==NULL;\
 }\
 \
-static bool HASH_SET_NAME##_contains (HASH_SET_NAME *set, T element)  {\
+static bool NAMESPACE##_contains (HASH_SET_NAME *set, T element)  {\
     long hash = set->hash_function(element);\
     size_t index = hash % set->capacity;\
     CELL_NAME * current_index = set->buckets[index];\
@@ -172,7 +172,7 @@ static bool HASH_SET_NAME##_contains (HASH_SET_NAME *set, T element)  {\
 }\
 \
 \
-static void HASH_SET_NAME##_print(HASH_SET_NAME *set, void (*print_function) (const T)) {\
+static void NAMESPACE##_print(HASH_SET_NAME *set, void (*print_function) (const T)) {\
     int c=0;   \
     if (print_function==NULL) {printf("{ NULL_PRINT_ELEMENT_FUNCTION }\n");}\
     else {\
@@ -198,8 +198,8 @@ static void HASH_SET_NAME##_print(HASH_SET_NAME *set, void (*print_function) (co
     }\
 }\
 \
-void HASH_SET_NAME##_println(HASH_SET_NAME *set, void (print_function) (const T) ) {\
-    HASH_SET_NAME##_print(set, print_function);\
+void NAMESPACE##_println(HASH_SET_NAME *set, void (print_function) (const T) ) {\
+    NAMESPACE##_print(set, print_function);\
     printf("\n");\
 }\
 \
