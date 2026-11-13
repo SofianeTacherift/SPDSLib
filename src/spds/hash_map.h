@@ -2,7 +2,6 @@
 // Created by sofiane on 11/09/2026.
 //
 
-
 #ifndef SPDS_HASH_MAP_H
 #define SPDS_HASH_MAP_H
 
@@ -59,10 +58,11 @@
     static HASH_MAP_NAME * NAMESPACE##_new ( long ( *hash_func) ( const K),  bool (*equals_func) ( const K, const K)) {\
         HASH_MAP_NAME *res=calloc(1, sizeof (HASH_MAP_NAME));\
         NAMESPACE##_init(res, hash_func, equals_func);\
+        return res;\
     }\
     \
     \
-    static void NAMESPACE##_free(HASH_MAP_NAME *map){\
+    static void NAMESPACE##_deinit(HASH_MAP_NAME *map){\
         for (size_t i=0; i<map->capacity ; i++) {\
             ENTRY_NAME *current = map->buckets[i];\
             while (current!=NULL) {\
@@ -72,6 +72,11 @@
             }\
         }\
         free(map->buckets);\
+        map->capacity=0;\
+        map->size=0;\
+    }\
+    static void NAMESPACE##_free(HASH_MAP_NAME *map){\
+        NAMESPACE##_deinit(map);\
         free(map);\
     }\
     static void NAMESPACE##_put ( HASH_MAP_NAME *map, K key, V value);\
@@ -215,13 +220,6 @@
     static void NAMESPACE##_println(HASH_MAP_NAME *map,void (*print_function) (const ENTRY_NAME*)) { \
         NAMESPACE##_print(map, print_function);\
         printf("\n");\
-    }\
-    \
-    \
-    \
-    \
-    \
-
+    }
 #endif
 //MATEMATIX_HASH_TABLE_H
-

@@ -43,5 +43,7 @@ int main(void){
     str_int_hash_map_remove(&map, "Hello");
     str_int_hash_map_println(&map, print_str_int_entry);
 
+    str_int_hash_map_deinit(&map);
+
 
 }
